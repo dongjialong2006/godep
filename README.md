@@ -22,7 +22,7 @@ git clone https://github.com/dongjialong2006/godep.git
 ## 安装
 
 - 将godep放到PATH所引到的bin目录下即可.
-- go get -u https://github.com/dongjialong2006/godep.git
+- go get -u github.com/dongjialong2006/godep
 
 ## 命令
 

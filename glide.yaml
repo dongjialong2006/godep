@@ -1,0 +1,81 @@
+---
+package: agent-server
+ignore:
+  - utils/util/code
+  - utils/util/file
+  - utils/util/network
+  - utils/types
+  - utils/protocol/http
+  - utils/protocol/nats
+  - utils/protocol/ssh
+  - utils/model/fw
+
+import:
+  - package: github.com/BurntSushi/toml
+    version: ~0.3.1
+  - package: github.com/dongjialong2006/log
+    version: ~0.15.2
+  - package: github.com/namsral/flag
+    version: ~1.7.4-pre
+  - package: github.com/nats-io/go-nats-streaming
+    version: ~0.4.0
+  - package: github.com/satori/go.uuid
+    version: ~1.2.0
+  - package: golang.org/x/tools
+    repo: https://github.com/golang/tools.git
+  - package: golang.org/x/crypto
+    repo: https://github.com/golang/crypto.git
+    subpackages:
+      - ssh
+  - package: golang.org/x/net
+    repo: https://github.com/golang/net.git
+  - package: golang.org/x/build
+    repo: https://github.com/golang/build.git
+  - package: golang.org/x/sys
+    repo: https://github.com/golang/sys.git
+  - package: golang.org/x/text
+    repo: https://github.com/golang/text.git
+  - package: github.com/rifflock/lfshook
+    version: ~2.4
+  - package: github.com/evalphobia/logrus_fluent
+  - package: github.com/sirupsen/logrus
+    version: ~1.0.6
+  - package: github.com/x-cray/logrus-prefixed-formatter
+    version: ~0.5.2
+  - package: github.com/nats-io/go-nats
+  - package: github.com/nats-io/nuid
+  - package: github.com/fluent/fluent-logger-golang
+  - package: github.com/gogo/protobuf
+  - package: github.com/mgutz/ansi
+  - package: github.com/tinylib/msgp
+  - package: github.com/mattn/go-colorable
+  - package: github.com/philhofer/fwd
+  - package: github.com/mattn/go-isatty
+  - package: gopkg.in/yaml.v2
+    repo: https://github.com/go-yaml/yaml.git
+    version: ~2.2.1
+  - package: github.com/hpcloud/tail
+    version: ~1.0.0
+  - package: github.com/pkg/errors
+  - package: git-biz.360es.cn/connectors/utils
+    repo: https://git-biz.360es.cn/connectors/utils.git
+    version: develop
+  - package: git-biz.360es.cn/connectors/fastfw
+    repo: https://git-biz.360es.cn/connectors/fastfw.git
+    version: 1.0/develop
+  - package: git-biz.360es.cn/connectors/smartfw
+    repo: https://git-biz.360es.cn/connectors/smartfw.git
+    version: 1.0/develop
+  - package: git-biz.360es.cn/connectors/fgfw
+    repo: https://git-biz.360es.cn/connectors/fgfw.git
+    version: 1.0/develop
+  - package: git-biz.360es.cn/connectors/hwfw
+    repo: https://git-biz.360es.cn/connectors/hwfw.git
+    version: 1.0/develop
+  - package: github.com/axgle/mahonia
+  - package: github.com/nats-io/nkeys
+testImport:
+  - package: github.com/onsi/ginkgo
+    version: ~1.6.0
+  - package: github.com/onsi/gomega
+    version: ~1.4.2
