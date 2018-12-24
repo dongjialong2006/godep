@@ -28,3 +28,18 @@ git clone https://github.com/dongjialong2006/godep.git
 
 - 在y有glide.yaml文件的目录下执行`godep`即可.
 
+## 注意
+
+该工具不支持`subpackages`命令，例如：
+
+***
+- package: golang.org/x/crypto/ssh
+- repo: https://github.com/golang/crypto.git
+
+***
+应改成：
+
+***
+- package: golang.org/x/crypto
+- repo: https://github.com/golang/crypto.git
+***

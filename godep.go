@@ -32,11 +32,12 @@ func PrintVersionWithTime() string {
 }
 
 func main() {
-	var cmd bool = false
+	var update bool = false
 	var version bool = false
 	set := flag.NewFlagSet("godep", flag.ContinueOnError)
-	set.BoolVar(&cmd, "update", false, "update packages accord to glide.yaml file")
+	set.BoolVar(&update, "update", false, "update packages accord to glide.yaml file")
 	set.BoolVar(&version, "version", false, "godep version")
+	set.BoolVar(&version, "v", false, "godep version")
 	if err := set.Parse(os.Args[1:]); nil != err {
 		fmt.Println(err)
 		return
@@ -47,8 +48,9 @@ func main() {
 			return
 		}
 
-		if "update" != os.Args[1] || "up" != os.Args[1] || "-update" != os.Args[1] || "-up" != os.Args[1] {
-			cmd = true
+		os.Args[1] = strings.Trim(os.Args[1], " ")
+		if "update" == os.Args[1] || "up" == os.Args[1] || "-update" == os.Args[1] || "-up" == os.Args[1] {
+			update = true
 		} else if "version" == os.Args[1] || "-version" == os.Args[1] || "v" == os.Args[1] || "-v" == os.Args[1] {
 			version = true
 		} else {
@@ -62,7 +64,7 @@ func main() {
 		return
 	}
 
-	pkg, err := NewPackages(cmd)
+	pkg, err := NewPackages(update)
 	if nil != err {
 		fmt.Println(err)
 		return
