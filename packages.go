@@ -50,15 +50,15 @@ func (p *Packages) init() error {
 		return fmt.Errorf("read glide.yaml file is empty.")
 	}
 
-	values := strings.Split(value, "import:\n")
+	values := strings.Split(value, "import:")
 	if 2 != len(values) {
 		return fmt.Errorf("invalide glide.yaml file.")
 	}
 
 	value = values[1]
-	pos := strings.Index(value, "ignore:\n")
+	pos := strings.Index(value, "ignore:")
 	if -1 != pos {
-		pos1 := strings.Index(value[pos:], "testImport:\n")
+		pos1 := strings.Index(value[pos:], "testImport:")
 		if -1 == pos1 {
 			value = value[:pos]
 		} else {
@@ -66,17 +66,16 @@ func (p *Packages) init() error {
 		}
 	}
 
-	value = strings.Replace(value, "testImport:\n", "", -1)
+	value = strings.Replace(value, "testImport:", "", -1)
 	values = strings.Split(value, "- package:")
 
 	var repo, version string
 	for _, value = range values {
-		value = strings.Trim(value, " ")
+		value = strings.Trim(value, " \n")
 		tmp := strings.Split(value, "\n")
 
 		if len(tmp) > 0 {
-			tmp[0] = strings.Trim(tmp[0], "\n")
-			tmp[0] = strings.Trim(tmp[0], " ")
+			tmp[0] = strings.Trim(tmp[0], " \n")
 		}
 
 		if "" == tmp[0] {
@@ -96,8 +95,7 @@ func (p *Packages) init() error {
 			continue
 		default:
 			for _, value = range tmp[1:] {
-				value = strings.Trim(value, "\n")
-				value = strings.Trim(value, " ")
+				value = strings.Trim(value, " \n")
 				if strings.HasPrefix(value, "repo:") {
 					repo = p.check(value, "repo:")
 				}
@@ -211,8 +209,8 @@ func (p *Packages) handle(path string, diff bool, node *Node, wg *sync.WaitGroup
 				if i > 1 {
 					node.version = strings.Replace(node.version, "v", "", -1)
 				}
-				continue
 			}
+			continue
 		}
 		err = p.rename(node)
 		break
@@ -254,7 +252,11 @@ func (p *Packages) rename(node *Node) error {
 
 		if !strings.HasSuffix(node.name, value) {
 			pos = strings.LastIndex(node.name, "/")
-			return os.Rename(fmt.Sprintf("./vendor/%s%s", node.name[:pos+1], value), fmt.Sprintf("./vendor/%s", node.name))
+			source := fmt.Sprintf("./vendor/%s%s", node.name[:pos+1], value)
+			exist, _ := p.checkFileExist(source)
+			if exist {
+				return os.Rename(source, fmt.Sprintf("./vendor/%s", node.name))
+			}
 		}
 	}
 
