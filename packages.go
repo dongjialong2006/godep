@@ -187,31 +187,39 @@ func (p *Packages) DownloadPkgs() error {
 		p.alterVersion(node)
 
 		wg.Add(1)
-		go func(path string, node *Node) {
-			var t2 = time.Now()
-			for i := 0; i < 2; i++ {
-				if err = p.exec(path, node); nil != err {
-					if !diff {
-						node.version = strings.Replace(node.version, "v", "", -1)
-						continue
-					}
-				}
-				err = p.rename(node)
-				break
-			}
-			if nil == err {
-				fmt.Println(fmt.Sprintf("package:%s is download, spend time:%v.", node.name, time.Now().Sub(t2)))
-			} else {
-				fmt.Println(fmt.Sprintf("package:%s download err:%v.", node.name, err))
-			}
-			wg.Done()
-		}(path, node)
+		go p.handle(path, diff, node, &wg)
 	}
 	wg.Wait()
 
 	fmt.Println(fmt.Sprintf("all packages download spend time:%v.", time.Now().Sub(t1)))
 
 	return nil
+}
+
+func (p *Packages) handle(path string, diff bool, node *Node, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	var err error = nil
+	var t2 = time.Now()
+	for i := 0; i < 4; i++ {
+		if err = p.exec(path, node); nil != err {
+			if !diff {
+				if i > 1 {
+					node.version = strings.Replace(node.version, "v", "", -1)
+				}
+				continue
+			}
+		}
+		err = p.rename(node)
+		break
+	}
+	if nil == err {
+		fmt.Println(fmt.Sprintf("package:%s is download, spend time:%v.", node.name, time.Now().Sub(t2)))
+	} else {
+		fmt.Println(fmt.Sprintf("package:%s download err:%v.", node.name, err))
+	}
+
+	return
 }
 
 func (p *Packages) diff(node *Node) bool {
