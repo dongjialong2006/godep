@@ -18,15 +18,19 @@ type Node struct {
 }
 
 type Packages struct {
-	nodes []*Node
+	nodes  []*Node
+	update bool
 }
 
-func NewPackages() (*Packages, error) {
+func NewPackages(cmd bool) (*Packages, error) {
 	pkg := &Packages{
-		nodes: make([]*Node, 0),
+		nodes:  make([]*Node, 0),
+		update: cmd,
 	}
 
-	os.RemoveAll("./vendor")
+	if !cmd {
+		os.RemoveAll("./vendor")
+	}
 
 	if err := pkg.init(); nil != err {
 		return nil, err
@@ -154,7 +158,6 @@ func (p *Packages) alterVersion(node *Node) {
 }
 
 func (p *Packages) DownloadPkgs() error {
-	var err error = nil
 	var wg sync.WaitGroup
 
 	t1 := time.Now()
@@ -164,8 +167,13 @@ func (p *Packages) DownloadPkgs() error {
 		}
 
 		path := fmt.Sprintf("./vendor/%s", node.name)
-		if err = p.newPath(path); nil != err {
+		exist, err := p.createFile(path)
+		if nil != err {
 			return err
+		}
+
+		if exist && p.update {
+			continue
 		}
 
 		pos := strings.LastIndex(path, "/")
@@ -174,30 +182,111 @@ func (p *Packages) DownloadPkgs() error {
 			continue
 		}
 
+		diff := p.diff(node)
+
 		p.alterVersion(node)
 
 		wg.Add(1)
 		go func(path string, node *Node) {
-			var err error = nil
 			var t2 = time.Now()
 			for i := 0; i < 2; i++ {
 				if err = p.exec(path, node); nil != err {
-					node.version = strings.Replace(node.version, "v", "", -1)
-					continue
+					if !diff {
+						node.version = strings.Replace(node.version, "v", "", -1)
+						continue
+					}
 				}
+				err = p.rename(node)
 				break
 			}
 			if nil == err {
 				fmt.Println(fmt.Sprintf("package:%s is download, spend time:%v.", node.name, time.Now().Sub(t2)))
 			} else {
-				fmt.Println(err)
+				fmt.Println(fmt.Sprintf("package:%s download err:%v.", node.name, err))
 			}
 			wg.Done()
 		}(path, node)
 	}
 	wg.Wait()
+
 	fmt.Println(fmt.Sprintf("all packages download spend time:%v.", time.Now().Sub(t1)))
+
 	return nil
+}
+
+func (p *Packages) diff(node *Node) bool {
+	if "" != node.repo {
+		pos := strings.LastIndex(node.repo, "/")
+		value := node.repo[pos+1:]
+		pos = strings.Index(value, ".")
+		if -1 != pos {
+			value = value[:pos]
+		}
+
+		if !strings.HasSuffix(node.name, value) {
+			return true
+		}
+	}
+
+	return false
+}
+
+func (p *Packages) rename(node *Node) error {
+	if "" != node.repo {
+		pos := strings.LastIndex(node.repo, "/")
+		value := node.repo[pos+1:]
+		pos = strings.Index(value, ".")
+		if -1 != pos {
+			value = value[:pos]
+		}
+
+		if !strings.HasSuffix(node.name, value) {
+			pos = strings.LastIndex(node.name, "/")
+			return os.Rename(fmt.Sprintf("./vendor/%s%s", node.name[:pos+1], value), fmt.Sprintf("./vendor/%s", node.name))
+		}
+	}
+
+	return nil
+}
+
+func (p *Packages) createFile(path string) (bool, error) {
+	exist, err := p.checkFileExist(path)
+	if nil != err {
+		return exist, err
+	}
+
+	if !exist {
+		if err = p.newPath(path); nil != err {
+			return exist, err
+		}
+	}
+
+	files, err := ioutil.ReadDir(path + "/")
+	if nil != err {
+		return false, nil
+	}
+
+	if len(files) == 0 {
+		exist = false
+	}
+
+	return exist, nil
+}
+
+func (p *Packages) checkFileExist(path string) (bool, error) {
+	if "" == path {
+		return false, fmt.Errorf("path is empty.")
+	}
+
+	_, err := os.Stat(path)
+	if err == nil {
+		return true, nil
+	}
+	if os.IsNotExist(err) {
+		return false, nil
+	}
+
+	return false, err
 }
 
 func (p *Packages) exec(path string, node *Node) error {

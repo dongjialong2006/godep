@@ -53,7 +53,7 @@ import:
   - package: github.com/mattn/go-isatty
   - package: gopkg.in/yaml.v2
     repo: https://github.com/go-yaml/yaml.git
-    version: ~2.2.1
+    version: ~2.2.2
   - package: github.com/hpcloud/tail
     version: ~1.0.0
   - package: github.com/pkg/errors
