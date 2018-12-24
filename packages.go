@@ -202,7 +202,9 @@ func (p *Packages) DownloadPkgs() error {
 			if nil == err {
 				fmt.Println(fmt.Sprintf("package:%s is download, spend time:%v.", node.name, time.Now().Sub(t2)))
 			} else {
-				fmt.Println(fmt.Sprintf("package:%s download err:%v.", node.name, err))
+				if !strings.Contains(err.Error(), "exist") {
+					fmt.Println(fmt.Sprintf("package:%s download err:%v.", node.name, err))
+				}
 			}
 			wg.Done()
 		}(path, node)
