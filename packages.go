@@ -46,6 +46,10 @@ func (p *Packages) init() error {
 	}
 
 	value := string(data)
+	if "" == value {
+		return fmt.Errorf("read glide.yaml file is empty.")
+	}
+
 	values := strings.Split(value, "import:\n")
 	if 2 != len(values) {
 		return fmt.Errorf("invalide glide.yaml file.")
