@@ -5,7 +5,31 @@ import (
 	"fmt"
 	"os"
 	"strings"
+	"time"
 )
+
+var (
+	Branch    = ""
+	Version   = ""
+	BuildTime = ""
+	BuildType = "godep"
+)
+
+func PrintVersionWithTime() string {
+	if "" == BuildTime {
+		BuildTime = time.Now().Format("2006-01-02 15:04:05")
+	}
+
+	if "" == Branch {
+		Branch = "master"
+	}
+
+	if "" == Version {
+		Version = "1.0.0"
+	}
+
+	return fmt.Sprintf("%s-%v-%v, build time:%v.", BuildType, Branch, Version, BuildTime)
+}
 
 func main() {
 	var cmd bool = false
@@ -31,6 +55,11 @@ func main() {
 			fmt.Println(fmt.Sprintf("unknown command:%s.", strings.Join(os.Args, " ")))
 			return
 		}
+	}
+
+	if version {
+		fmt.Println(PrintVersionWithTime())
+		return
 	}
 
 	pkg, err := NewPackages(cmd)
