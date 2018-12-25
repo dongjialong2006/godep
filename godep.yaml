@@ -25,8 +25,6 @@ import:
     repo: https://github.com/golang/tools.git
   - package: golang.org/x/crypto
     repo: https://github.com/golang/crypto.git
-    subpackages:
-      - ssh
   - package: golang.org/x/net
     repo: https://github.com/golang/net.git
   - package: golang.org/x/build

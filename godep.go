@@ -15,7 +15,7 @@ var (
 	BuildType = "godep"
 )
 
-func PrintVersionWithTime() string {
+func printVersionWithTime() string {
 	if "" == BuildTime {
 		BuildTime = time.Now().Format("2006-01-02 15:04:05")
 	}
@@ -31,41 +31,51 @@ func PrintVersionWithTime() string {
 	return fmt.Sprintf("%s-%v-%v, build time:%v.", BuildType, Branch, Version, BuildTime)
 }
 
-func main() {
+func parse() (bool, bool, error) {
+	var err error = nil
 	var update bool = false
 	var version bool = false
 	set := flag.NewFlagSet("godep", flag.ContinueOnError)
 	set.BoolVar(&update, "update", false, "update packages accord to glide.yaml file")
 	set.BoolVar(&version, "version", false, "godep version")
-	set.BoolVar(&version, "v", false, "godep version")
-	if err := set.Parse(os.Args[1:]); nil != err {
+	if err = set.Parse(os.Args[1:]); nil != err {
+		return update, version, err
+	}
+
+	if len(os.Args) > 1 {
+		if "update" == os.Args[1] || "up" == os.Args[1] {
+			update = true
+		} else if "version" == os.Args[1] || "v" == os.Args[1] {
+			version = true
+		} else {
+			if !update && !version {
+				err = fmt.Errorf("unknown command:%s.", strings.Join(os.Args, " "))
+			}
+		}
+	}
+
+	return update, version, err
+}
+
+func main() {
+	update, version, err := parse()
+	if nil != err {
 		fmt.Println(err)
 		return
 	}
 
-	if len(os.Args) > 1 {
-		if "-h" == os.Args[1] || "-help" == os.Args[1] {
-			return
-		}
-
-		os.Args[1] = strings.Trim(os.Args[1], " ")
-		if "update" == os.Args[1] || "up" == os.Args[1] || "-update" == os.Args[1] || "-up" == os.Args[1] {
-			update = true
-		} else if "version" == os.Args[1] || "-version" == os.Args[1] || "v" == os.Args[1] || "-v" == os.Args[1] {
-			version = true
-		} else {
-			fmt.Println(fmt.Sprintf("unknown command:%s.", strings.Join(os.Args, " ")))
-			return
-		}
-	}
-
 	if version {
-		fmt.Println(PrintVersionWithTime())
+		fmt.Println(printVersionWithTime())
 		return
 	}
 
 	pkg, err := NewPackages(update)
 	if nil != err {
+		fmt.Println(err)
+		return
+	}
+
+	if err = pkg.Init(); nil != err {
 		fmt.Println(err)
 		return
 	}

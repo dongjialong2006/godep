@@ -4,7 +4,7 @@
 IMPORT_PATH 	:= godep
 
 BRANCH			:= $(shell git branch | awk '{print $$2}')
-VERSION			:= $(shell cat version.txt)
+VERSION			:= $(shell git log --pretty=format:"%h" -1)
 DATE			:= $(shell date '+%Y-%m-%d %H:%M:%S')
 FLAGS			:= -ldflags='-s -X "$(IMPORT_PATH)/buildinfo.Version=$(VERSION)" -X "$(IMPORT_PATH)/buildinfo.BuildTime=$(DATE)" -X "$(IMPORT_PATH)/buildinfo.Branch=$(BRANCH)"'
 
