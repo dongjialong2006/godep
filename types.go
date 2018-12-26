@@ -30,7 +30,9 @@ func NewPackages(update bool) (*Packages, error) {
 	}
 
 	if !update {
-		os.RemoveAll("./vendor")
+		if err := os.RemoveAll("./vendor"); nil != err {
+			return nil, err
+		}
 	}
 
 	return p, nil
