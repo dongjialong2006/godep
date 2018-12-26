@@ -71,6 +71,12 @@ func (p *Packages) Init() error {
 			continue
 		}
 
+		_, ok := p.names[tmp[0]]
+		if ok {
+			continue
+		}
+		p.names[tmp[0]] = true
+
 		repo = ""
 		version = ""
 
@@ -108,8 +114,7 @@ func (p *Packages) Init() error {
 
 func (p *Packages) DownloadPkgs() error {
 	var wg sync.WaitGroup
-
-	t1 := time.Now()
+	var t1 = time.Now()
 	for _, node := range p.nodes {
 		if "" == node.name {
 			continue
