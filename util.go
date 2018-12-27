@@ -61,12 +61,8 @@ func (p *Packages) handle(path string, diff bool, node *Node, wg *sync.WaitGroup
 			continue
 		}
 
-		if nil != err {
-			break
-		}
-
 		if err1 := p.rename(node); nil != err1 {
-			fmt.Println(fmt.Sprintf("package:%s rename err:%v.", node.name, err1))
+			fmt.Println(fmt.Sprintf("package:%s rename err:%v, path:%s.", node.name, err1, path))
 		}
 		break
 	}
