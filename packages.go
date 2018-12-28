@@ -150,11 +150,19 @@ func (p *Packages) handle(path string, diff bool, node *Node, wg *sync.WaitGroup
 
 	var err error = nil
 	var t2 = time.Now()
-	for i := 0; i < 4; i++ {
+	for i := 0; i < 5; i++ {
 		if err = p.exec(path, node); nil != err {
 			if !diff {
-				if i > 1 {
+				switch i {
+				case 0:
+					num := len(node.version)
+					if num > 2 {
+						node.version = node.version[:num-2]
+					}
+				case 1:
 					node.version = strings.Replace(node.version, "v", "", -1)
+				case 2:
+					node.version = ""
 				}
 			}
 			continue
