@@ -80,6 +80,10 @@ func main() {
 		return
 	}
 
+	// pkg.String()
+
+	// fmt.Println("\n\n\n\n\n")
+
 	if err = pkg.DownloadPkgs(); nil != err {
 		fmt.Println(err)
 	}
