@@ -58,9 +58,19 @@ git clone https://github.com/dongjialong2006/godep.git
 - subpackages:
   - ssh
 ***
-应改成：
-
-***
 - package: golang.org/x/crypto
 - repo: https://github.com/golang/crypto.git
 ***
+
+第三方库需要输入用户名和密码的情况，配置方式如下：
+***
+- package: git-biz.360es.cn/connectors/utils
+- repo: https://git-biz.360es.cn/connectors/utils.git
+- version: develop
+***
+- package: git-biz.360es.cn/connectors/utils
+- repo: https://dongchaofeng:123456789@git-biz.360es.cn/connectors/utils.git
+- version: develop
+***
+
+另一种方式是在GIT配置中添加对第三方库的登录信息.
