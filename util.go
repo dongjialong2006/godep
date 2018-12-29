@@ -1,9 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"io"
 	"io/ioutil"
 	"os"
+	"os/exec"
 	"strings"
 )
 
@@ -132,4 +135,28 @@ func CreatePath(path string) error {
 	}
 
 	return err
+}
+
+func PipeLine(r io.Reader, cmd *exec.Cmd) {
+	br := bufio.NewReader(r)
+	value := ""
+	for {
+		l, _, err := br.ReadLine()
+		if err != nil {
+			if err == io.EOF {
+				// fmt.Println(fmt.Sprintf("pipe line is closed."))
+				return
+			}
+			fmt.Println(err)
+			return
+		}
+
+		value = string(l)
+		fmt.Println(value)
+		if strings.Contains(value, "yes/no") {
+			if nil != cmd && nil != cmd.Process {
+				cmd.Process.Kill()
+			}
+		}
+	}
 }

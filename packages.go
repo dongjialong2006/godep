@@ -2,7 +2,6 @@ package main
 
 import (
 	"bufio"
-	"bytes"
 	"fmt"
 	"io"
 	"os"
@@ -197,9 +196,16 @@ func (p *Packages) exec(path string, node *Node) error {
 	// fmt.Println(cmd)
 
 	handle := exec.Command("/bin/bash", "-c", cmd)
+	if nil == handle {
+		return fmt.Errorf("exec command handle is nil.")
+	}
 
-	var out bytes.Buffer
-	handle.Stdout = &out
+	stdout, err := handle.StdoutPipe()
+	if err != nil {
+		return err
+	}
+
+	go PipeLine(stdout, handle)
 
 	return handle.Run()
 }
