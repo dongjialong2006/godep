@@ -182,13 +182,17 @@ func (p *Packages) handle(path string, diff bool, node *Node, wg *sync.WaitGroup
 }
 
 func (p *Packages) timeout(ch chan struct{}, name string, cmd *exec.Cmd) {
-	for i := 0; i < 300; i++ {
+	for i := 0; i < 600; i++ {
 		select {
 		case <-ch:
 			return
 		default:
 			time.Sleep(time.Second)
 		}
+	}
+
+	if nil != cmd.Process {
+		kill(cmd.Process.Pid)
 	}
 
 	fmt.Println(fmt.Sprintf("package:%s download timeout, please checkout net or authentication.", name))
