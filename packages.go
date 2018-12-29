@@ -181,6 +181,19 @@ func (p *Packages) handle(path string, diff bool, node *Node, wg *sync.WaitGroup
 	return
 }
 
+func (p *Packages) timeout(ch chan struct{}, name string, cmd *exec.Cmd) {
+	for i := 0; i < 300; i++ {
+		select {
+		case <-ch:
+			return
+		default:
+			time.Sleep(time.Second)
+		}
+	}
+
+	fmt.Println(fmt.Sprintf("package:%s download timeout, please checkout net or authentication.", name))
+}
+
 func (p *Packages) exec(path string, node *Node) error {
 	cmd := fmt.Sprintf("cd %s;git clone", path)
 	if "" != node.version {
@@ -206,6 +219,10 @@ func (p *Packages) exec(path string, node *Node) error {
 	}
 
 	go PipeLine(stdout, handle)
+
+	ch := make(chan struct{})
+	defer close(ch)
+	go p.timeout(ch, node.name, handle)
 
 	return handle.Run()
 }

@@ -8,6 +8,7 @@ import (
 	"os"
 	"os/exec"
 	"strings"
+	"syscall"
 )
 
 func FindYamlFile() string {
@@ -139,24 +140,30 @@ func CreatePath(path string) error {
 
 func PipeLine(r io.Reader, cmd *exec.Cmd) {
 	br := bufio.NewReader(r)
-	value := ""
 	for {
-		l, _, err := br.ReadLine()
+		data, _, err := br.ReadLine()
 		if err != nil {
-			if err == io.EOF {
-				// fmt.Println(fmt.Sprintf("pipe line is closed."))
-				return
-			}
-			fmt.Println(err)
 			return
 		}
 
-		value = string(l)
-		fmt.Println(value)
+		value := string(data)
+		if strings.HasPrefix(value, "package:") {
+			fmt.Println(value)
+		}
+
 		if strings.Contains(value, "yes/no") {
-			if nil != cmd && nil != cmd.Process {
-				cmd.Process.Kill()
+			if nil != cmd.Process {
+				kill(cmd.Process.Pid)
 			}
 		}
 	}
+}
+
+func kill(pid int) {
+	process, err := os.FindProcess(pid)
+	if nil != err {
+		return
+	}
+
+	process.Signal(syscall.SIGKILL)
 }
