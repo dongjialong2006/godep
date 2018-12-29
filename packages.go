@@ -83,12 +83,11 @@ func (p *Packages) DownloadPkgs() error {
 		}
 
 		path := fmt.Sprintf("./vendor/%s", node.name)
-		exist, err := OpenFile(path)
-		if nil != err {
+		if err := CreatePath(path); nil != err {
 			return err
 		}
 
-		if exist && p.update {
+		if ok := IsExist(path); ok && p.update {
 			continue
 		}
 

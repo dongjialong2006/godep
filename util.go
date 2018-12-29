@@ -66,54 +66,13 @@ func Rename(node *Node) error {
 		if !strings.HasSuffix(node.name, value) {
 			pos = strings.LastIndex(node.name, "/")
 			source := fmt.Sprintf("./vendor/%s%s", node.name[:pos+1], value)
-			exist, _ := CheckFileExist(source)
-			if exist {
+			if IsExist(source) {
 				return os.Rename(source, fmt.Sprintf("./vendor/%s", node.name))
 			}
 		}
 	}
 
 	return nil
-}
-
-func OpenFile(path string) (bool, error) {
-	exist, err := CheckFileExist(path)
-	if nil != err {
-		return exist, err
-	}
-
-	if !exist {
-		if err = CreatePath(path); nil != err {
-			return exist, err
-		}
-	}
-
-	files, err := ioutil.ReadDir(path + "/")
-	if nil != err {
-		return false, nil
-	}
-
-	if len(files) == 0 {
-		exist = false
-	}
-
-	return exist, nil
-}
-
-func CheckFileExist(path string) (bool, error) {
-	if "" == path {
-		return false, fmt.Errorf("path is empty.")
-	}
-
-	_, err := os.Stat(path)
-	if err == nil {
-		return true, nil
-	}
-	if os.IsNotExist(err) {
-		return false, nil
-	}
-
-	return false, err
 }
 
 func CreatePath(path string) error {
@@ -123,7 +82,7 @@ func CreatePath(path string) error {
 
 	pos := strings.LastIndex(path, "/")
 	if -1 == pos {
-		return nil
+		return fmt.Errorf("path:%s is invalide.", path)
 	}
 	path = path[:pos]
 	_, err := os.Stat(path)
@@ -132,10 +91,33 @@ func CreatePath(path string) error {
 	}
 
 	if os.IsNotExist(err) {
-		err = os.MkdirAll(path, os.ModePerm)
+		os.MkdirAll(path, os.ModePerm)
 	}
 
-	return err
+	return nil
+}
+
+func IsExist(path string) bool {
+	_, err := os.Stat(path)
+	if nil != err {
+		if os.IsNotExist(err) {
+			return false
+		}
+		fmt.Println(fmt.Sprintf("path:%s, err:%v.", err))
+		return false
+	}
+
+	files, err := ioutil.ReadDir(path + "/")
+	if nil != err {
+		fmt.Println(fmt.Sprintf("path:%s, err:%v.", err))
+		return false
+	}
+
+	if len(files) == 0 {
+		return false
+	}
+
+	return true
 }
 
 func PipeLine(r io.Reader, cmd *exec.Cmd) {
