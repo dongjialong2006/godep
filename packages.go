@@ -12,8 +12,9 @@ import (
 	"strings"
 )
 
-func NewPackages(update bool) (*Packages, error) {
+func NewPackages(update bool, pkgs string) (*Packages, error) {
 	p := &Packages{
+		pkgs:   make(map[string]bool),
 		nodes:  make([]*Node, 0),
 		names:  make(map[string]bool),
 		update: update,
@@ -21,6 +22,22 @@ func NewPackages(update bool) (*Packages, error) {
 
 	if !update {
 		os.RemoveAll("./vendor")
+	}
+
+	pkgs = strings.Trim(pkgs, " \n")
+	if "" != pkgs {
+		tmp := strings.Split(pkgs, " ")
+		if 1 == len(p.pkgs) {
+			tmp = strings.Split(pkgs, ",")
+		}
+
+		for _, name := range tmp {
+			name = strings.Trim(name, " \n")
+			if "" == name {
+				continue
+			}
+			p.pkgs[name] = true
+		}
 	}
 
 	return p, nil
@@ -83,6 +100,13 @@ func (p *Packages) DownloadPkgs() error {
 		}
 
 		path := fmt.Sprintf("./vendor/%s", node.name)
+		if len(p.pkgs) > 0 {
+			if !p.updatePkg(node) {
+				continue
+			}
+			os.RemoveAll(path)
+		}
+
 		if err := CreatePath(path); nil != err {
 			return err
 		}
@@ -109,6 +133,16 @@ func (p *Packages) DownloadPkgs() error {
 	fmt.Println(fmt.Sprintf("all packages download spend time:%v.", time.Now().Sub(t1)))
 
 	return nil
+}
+
+func (p *Packages) updatePkg(node *Node) bool {
+	for pkg, _ := range p.pkgs {
+		if node.name == pkg || strings.HasSuffix(node.name, pkg) {
+			return true
+		}
+	}
+
+	return false
 }
 
 func (p *Packages) init(name string, value string) error {

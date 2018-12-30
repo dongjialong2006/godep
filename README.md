@@ -42,11 +42,15 @@ git clone https://github.com/dongjialong2006/godep.git
 ## 命令
 
 支持的参数
+- up:表示更新未下载的包.
 - update: 表示更新未下载的包.
 - version: 查看当前版本.
 
 执行命令
-- godep or godep update or godep -update
+- `godep`: 删除当前目录下的vendor，然后重新下载所依赖的包.
+- `godep up` 或 `godep update`: 更新未下载的依赖包.
+- `godep -update utils 或 `godep -up utils`: 更新指定包.
+以上命令均依赖.yaml文件，就是说不管是更新的包还是下载的包都需要在.yaml中存在.
 
 ## 注意
 

@@ -31,15 +31,17 @@ func printVersionWithTime() string {
 	return fmt.Sprintf("%s-%v-%v, build time:%v.", BuildType, Branch, Version, BuildTime)
 }
 
-func parse() (bool, bool, error) {
+func parse() (bool, bool, string, error) {
 	var err error = nil
+	var pkgs string = ""
 	var update bool = false
 	var version bool = false
 	set := flag.NewFlagSet("godep", flag.ContinueOnError)
-	set.BoolVar(&update, "update", false, "update packages accord to glide.yaml file")
+	set.StringVar(&pkgs, "up", "", "update the specified package to separate by commas")
+	set.StringVar(&pkgs, "update", "", "update the specified package to separate by commas")
 	set.BoolVar(&version, "version", false, "godep version")
 	if err = set.Parse(os.Args[1:]); nil != err {
-		return update, version, err
+		return update, version, pkgs, err
 	}
 
 	if len(os.Args) > 1 {
@@ -47,6 +49,8 @@ func parse() (bool, bool, error) {
 			update = true
 		} else if "version" == os.Args[1] || "v" == os.Args[1] {
 			version = true
+		} else if "-update" == os.Args[1] || "-up" == os.Args[1] {
+			// continue
 		} else {
 			if !update && !version {
 				err = fmt.Errorf("unknown command:%s.", strings.Join(os.Args, " "))
@@ -54,11 +58,11 @@ func parse() (bool, bool, error) {
 		}
 	}
 
-	return update, version, err
+	return update, version, pkgs, err
 }
 
 func main() {
-	update, version, err := parse()
+	update, version, pkgs, err := parse()
 	if nil != err {
 		fmt.Println(err)
 		return
@@ -69,7 +73,7 @@ func main() {
 		return
 	}
 
-	pkg, err := NewPackages(update)
+	pkg, err := NewPackages(update, pkgs)
 	if nil != err {
 		fmt.Println(err)
 		return

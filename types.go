@@ -15,6 +15,7 @@ func NewNode(name string, repo string, version string) *Node {
 }
 
 type Packages struct {
+	pkgs   map[string]bool
 	nodes  []*Node
 	names  map[string]bool
 	update bool
