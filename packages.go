@@ -27,7 +27,7 @@ func NewPackages(update bool, pkgs string) (*Packages, error) {
 	pkgs = strings.Trim(pkgs, " \n")
 	if "" != pkgs {
 		tmp := strings.Split(pkgs, " ")
-		if 1 == len(p.pkgs) {
+		if 1 == len(tmp) {
 			tmp = strings.Split(pkgs, ",")
 		}
 
@@ -105,6 +105,7 @@ func (p *Packages) DownloadPkgs() error {
 				continue
 			}
 			os.RemoveAll(path)
+			fmt.Println(fmt.Sprintf("package:%s is removed, spend time:%v.", path, time.Now().Sub(t1)))
 		}
 
 		if err := CreatePath(path); nil != err {
