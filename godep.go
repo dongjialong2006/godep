@@ -50,7 +50,7 @@ func parse() (bool, bool, string, error) {
 		} else if "version" == os.Args[1] || "v" == os.Args[1] {
 			version = true
 		} else if "-update" == os.Args[1] || "-up" == os.Args[1] {
-			// continue
+			update = true
 		} else {
 			if !update && !version {
 				err = fmt.Errorf("unknown command:%s.", strings.Join(os.Args, " "))
