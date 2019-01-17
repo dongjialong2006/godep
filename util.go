@@ -103,13 +103,13 @@ func IsExist(path string) bool {
 		if os.IsNotExist(err) {
 			return false
 		}
-		fmt.Println(fmt.Sprintf("path:%s, err:%v.", err))
+		fmt.Println(fmt.Sprintf("path:%s, err:%v.", path, err))
 		return false
 	}
 
 	files, err := ioutil.ReadDir(path + "/")
 	if nil != err {
-		fmt.Println(fmt.Sprintf("path:%s, err:%v.", err))
+		fmt.Println(fmt.Sprintf("path:%s, err:%v.", path, err))
 		return false
 	}
 

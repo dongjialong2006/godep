@@ -94,6 +94,7 @@ func (p *Packages) Init() error {
 func (p *Packages) DownloadPkgs() error {
 	var wg sync.WaitGroup
 	var t1 = time.Now()
+
 	for _, node := range p.nodes {
 		if "" == node.name {
 			continue
