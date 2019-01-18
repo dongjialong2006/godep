@@ -68,12 +68,12 @@ git clone https://github.com/dongjialong2006/godep.git
 
 第三方库需要输入用户名和密码的情况，配置方式如下：
 ***
-- package: git-biz.360es.cn/connectors/utils
-- repo: https://git-biz.360es.cn/connectors/utils.git
+- package: github.com/connectors/utils
+- repo: https://github.com/connectors/utils.git
 - version: develop
 ***
-- package: git-biz.360es.cn/connectors/utils
-- repo: https://dongchaofeng:123456789@git-biz.360es.cn/connectors/utils.git
+- package: github.com/connectors/utils
+- repo: https://dongchaofeng:123456789@github.com/connectors/utils.git
 - version: develop
 ***
 
