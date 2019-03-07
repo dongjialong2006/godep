@@ -3,16 +3,20 @@ import java.text.SimpleDateFormat
 
 node('godep') {
     try{
+        echo "prepare"
         stage("Prepare") {
             prepare()
         }
+        echo "test"
         stage("Test") {
             // test()
             sh "test success"
         }
+        echo "build"
         stage("Build") {
             sh 'make'
         }
+        echo "tag"
         stage("Tag"){
             tag("v1.0.0")
         }
@@ -21,26 +25,11 @@ node('godep') {
     }
 }
 
-def test(){
-	def result = sh returnStatus: true, script: 'make update && make test '
-    if(result != 0){
-        currentBuild.result = 'ABORTED'
-        error('go test failed')
-    }
-    junit allowEmptyResults: true, keepLongStdio: true, testResults: 'report.xml'
-}
-
 def prepare(){
     checkout scm
     if(env.BRANCH_NAME.indexOf("/") == -1){
         currentBuild.result = 'ABORTED'
         error('The branches do not need ci.')
-    }
-    branch = env.BRANCH_NAME.split("/")[1]
-    if(branch == "release"){
-        // 发版就用version.txt文件里面的版本来打tag
-        project.image_tag = project.version
-        return
     }
 }
 
