@@ -10,20 +10,13 @@ pipeline {
         stage('Build') {
             parallel {
                 stage('BranchA') {
-                    agent {
-                        label "for-branch-a"
-                    }
                     steps {
                         echo "On Branch A"
                     }
                 }
                 stage('BranchB') {
-                    agent {
-                        label "for-branch-b"
-                    }
                     steps {
-                        sh 'make'
-                        archiveArtifacts artifacts: 'bin/*', fingerprint: true
+                        echo "On Branch B"
                     }
                 }
             }
