@@ -7,26 +7,31 @@ pipeline {
                 echo 'Prepare..'
             }
         }
+        stage("Test") {
+            steps {
+                echo 'Test..'
+            }
+        }
+        stage("Analysis") {
+            steps {
+                echo 'Analysis..'
+            }
+        }
         stage('Build') {
             parallel {
-                stage('BranchA') {
+                stage('OPS') {
                     agent any
                     steps {
                         echo "On Branch A"
                     }
                 }
-                stage('BranchB') {
+                stage('SMAC') {
                     agent any
                     steps {
                         sh 'make'
                         archiveArtifacts artifacts: 'bin/*', fingerprint: true
                     }
                 }
-            }
-        }
-        stage('Test') {
-            steps {
-                echo 'Testing..'
             }
         }
         stage('Deploy') {
