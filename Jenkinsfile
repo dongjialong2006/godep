@@ -18,6 +18,11 @@ pipeline {
             }
         }
         stage('Build') {
+            steps {
+                echo "Build.."
+            }
+        }
+        stage('Deploy') {
             parallel {
                 stage('OPS') {
                     agent any
@@ -32,11 +37,6 @@ pipeline {
                         archiveArtifacts artifacts: 'bin/*', fingerprint: true
                     }
                 }
-            }
-        }
-        stage('Deploy') {
-            steps {
-                echo 'Deploying....'
             }
         }
     }
