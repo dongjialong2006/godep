@@ -5,7 +5,7 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'make'
-                archiveArtifacts artifacts: '**/bin/*', fingerprint: true
+                archiveArtifacts artifacts: 'bin/*', fingerprint: true
             }
         }
         stage('Test') {
