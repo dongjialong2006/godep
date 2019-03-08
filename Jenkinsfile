@@ -1,4 +1,4 @@
-pipeline {
+pipeline('godep1') {
     agent any
 
     stages {
@@ -26,7 +26,7 @@ pipeline {
     }
 }
 
-pipeline {
+pipeline('godep2') {
     agent any
 
     stages {
