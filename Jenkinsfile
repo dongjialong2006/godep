@@ -1,4 +1,4 @@
-pipeline('godep1') {
+pipeline {
     agent any
 
     stages {
@@ -8,9 +8,24 @@ pipeline('godep1') {
             }
         }
         stage('Build') {
-            steps {
-                sh 'make'
-                archiveArtifacts artifacts: 'bin/*', fingerprint: true
+            parallel {
+                stage('BranchA') {
+                    agent {
+                        label "for-branch-a"
+                    }
+                    steps {
+                        echo "On Branch A"
+                    }
+                }
+                stage('BranchB') {
+                    agent {
+                        label "for-branch-b"
+                    }
+                    steps {
+                        sh 'make'
+                        archiveArtifacts artifacts: 'bin/*', fingerprint: true
+                    }
+                }
             }
         }
         stage('Test') {
@@ -19,29 +34,6 @@ pipeline('godep1') {
             }
         }
         stage('Deploy') {
-            steps {
-                echo 'Deploying....'
-            }
-        }
-    }
-}
-
-pipeline('godep2') {
-    agent any
-
-    stages {
-        stage('Build1') {
-            steps {
-                sh 'make'
-                archiveArtifacts artifacts: 'bin/*', fingerprint: true
-            }
-        }
-        stage('Test1') {
-            steps {
-                echo 'Testing..'
-            }
-        }
-        stage('Deploy1') {
             steps {
                 echo 'Deploying....'
             }
