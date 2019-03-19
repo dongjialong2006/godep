@@ -21,7 +21,6 @@ pipeline {
             steps {
             	script {
 		        	for(int i = 0; i < 3; i++) {
-						echo i
 		        	    stage("Analysis1") {
 				            steps {
 				                echo 'Analysis1..'
