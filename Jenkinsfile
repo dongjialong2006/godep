@@ -1,5 +1,5 @@
 pipeline {
-    agent none
+    agent any
     stages {
         stage('Prepare') {
             steps {
@@ -19,14 +19,42 @@ pipeline {
         stage('Dispatch') {
         	parallel {
 				stage('OPS') {
-                    steps {
-                        echo "ops"
-                    }
+                    stages {
+		               stage('Init') {
+		                   steps {
+		                       echo "Init.."
+		                   }
+		               }
+		               stage('Build') {
+		                   steps {
+		                       echo "Build.."
+		                   }
+		               }
+		               stage('Deploy') {
+		                   steps {
+		                       echo "Deploy.."
+		                   }
+		               }
+		            }
                 }
                 stage('ZSY') {
-                    steps {
-                        echo "zsy"
-                    }
+                    stages {
+		               stage('Init') {
+		                   steps {
+		                       echo "Init.."
+		                   }
+		               }
+		               stage('Build') {
+		                   steps {
+		                       echo "Build.."
+		                   }
+		               }
+		               stage('Deploy') {
+		                   steps {
+		                       echo "Deploy.."
+		                   }
+		               }
+		            }
                 }
                 stage('SMAC') {
                     stages {
