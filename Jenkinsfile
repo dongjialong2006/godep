@@ -15,65 +15,61 @@ pipeline {
             steps {
                 echo 'Analysis..'
             }
-        } 
+        }
+        stage("Check") {
+            steps {
+                echo 'Check..'
+            }
+        }
         stage('Dispatch') {
         	parallel {
 				stage('OPS') {
-                    stages {
-		               stage('Init') {
-		                   steps {
-		                       echo "Init.."
-		                   }
-		               }
-		               stage('Build') {
-		                   steps {
-		                       echo "Build.."
-		                   }
-		               }
-		               stage('Deploy') {
-		                   steps {
-		                       echo "Deploy.."
-		                   }
-		               }
-		            }
+					stages {
+						stage('Adapter') {
+							steps {
+								echo "Adapter.."
+							}
+						}
+						stage('Build') {
+							steps {
+								echo "Build.."
+							}
+						}
+						stage('Docker') {
+							steps {
+								echo "Docker.."
+							}
+						}
+						stage('Deploy') {
+							steps {
+								echo "Deploy.."
+							}
+						}
+					}
                 }
                 stage('ZSY') {
-                    stages {
-		               stage('Init') {
-		                   steps {
-		                       echo "Init.."
-		                   }
-		               }
-		               stage('Build') {
-		                   steps {
-		                       echo "Build.."
-		                   }
-		               }
-		               stage('Deploy') {
-		                   steps {
-		                       echo "Deploy.."
-		                   }
-		               }
-		            }
-                }
-                stage('SMAC') {
-                    stages {
-		               stage('Init') {
-		                   steps {
-		                       echo "Init.."
-		                   }
-		               }
-		               stage('Build') {
-		                   steps {
-		                       echo "Build.."
-		                   }
-		               }
-		               stage('Deploy') {
-		                   steps {
-		                       echo "Deploy.."
-		                   }
-		               }
-		            }
+					stages {
+						stage('Adapter') {
+							steps {
+								echo "Adapter.."
+							}
+						}
+						stage('Build') {
+							steps {
+								echo "Build.."
+							}
+						}
+						stage('Docker') {
+							steps {
+								echo "Docker.."
+							}
+						}
+						stage('Deploy') {
+							steps {
+								echo "Deploy.."
+							}
+						}
+					}
                 }
 			}
         }
