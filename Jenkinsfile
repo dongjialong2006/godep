@@ -33,7 +33,6 @@ pipeline {
 				        } 
 		            }
 		        }
-                echo 'Deploy..'
             }
         }
     }
