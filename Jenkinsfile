@@ -7,36 +7,34 @@ pipeline {
                 echo 'Prepare..'
             }
         }
-        stage("Test") {
+        stage('Test') {
             steps {
-                echo 'Test..'
+                echo "Test.."
             }
         }
         stage("Analysis") {
             steps {
                 echo 'Analysis..'
             }
-        }
-        stage('Build') {
-            steps {
-                echo "Build.."
-            }
-        }
+        } 
         stage('Deploy') {
-            parallel {
-                stage('OPS') {
-                    agent any
-                    steps {
-                        echo "On Branch A"
-                    }
-                }
-                stage('SMAC') {
-                    agent any
-                    steps {
-                        sh 'make'
-                        archiveArtifacts artifacts: 'bin/*', fingerprint: true
-                    }
-                }
+            steps {
+            	script {
+		        	for(int i = 0; i < 3; i++) {
+						echo i
+		        	    stage("Analysis1") {
+				            steps {
+				                echo 'Analysis1..'
+				            }
+				        }
+						stage("Analysis2") {
+				            steps {
+				                echo 'Analysis2..'
+				            }
+				        } 
+		            }
+		        }
+                echo 'Deploy..'
             }
         }
     }
