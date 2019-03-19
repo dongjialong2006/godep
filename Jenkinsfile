@@ -1,8 +1,7 @@
 pipeline {
-    agent any
-
+    agent none
     stages {
-        stage("Prepare") {
+        stage('Prepare') {
             steps {
                 echo 'Prepare..'
             }
@@ -17,23 +16,38 @@ pipeline {
                 echo 'Analysis..'
             }
         } 
-        stage('Deploy') {
-            steps {
-            	script {
-		        	for(int i = 0; i < 3; i++) {
-		        	    stage("Analysis1") {
-				            steps {
-				                echo 'Analysis1..'
-				            }
-				        }
-						stage("Analysis2") {
-				            steps {
-				                echo 'Analysis2..'
-				            }
-				        } 
+        stage('Dispatch') {
+        	parallel {
+				stage('OPS') {
+                    steps {
+                        echo "ops"
+                    }
+                }
+                stage('ZSY') {
+                    steps {
+                        echo "zsy"
+                    }
+                }
+                stage('SMAC') {
+                    stages {
+		               stage('Init') {
+		                   steps {
+		                       echo "Init.."
+		                   }
+		               }
+		               stage('Build') {
+		                   steps {
+		                       echo "Build.."
+		                   }
+		               }
+		               stage('Deploy') {
+		                   steps {
+		                       echo "Deploy.."
+		                   }
+		               }
 		            }
-		        }
-            }
+                }
+			}
         }
     }
 }
