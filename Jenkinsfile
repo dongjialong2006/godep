@@ -73,5 +73,10 @@ pipeline {
                 }
 			}
         }
+        stage("Recovery") {
+            steps {
+                echo 'Recovery..'
+            }
+        }
     }
 }
